@@ -9,9 +9,11 @@ nestjs + typeorm + mysql
 ```bash
 $ docker-compose up
 ```
+첫 구동시 db에 resourse 스키마가 없어 오류가 발생할 수 있습니다.
 
 2. **DB IMPORT:**
     - 해당 DB는 공통코드를 사용하였습니다.
+    - 첫 구동시 db에 resourse 스키마가 없어 오류가 발생할 수 있습니다.
     - root경로에 dump.sql이 있습니다. mysql에 import해주시면됩니다.
     - 스키마명은 `resourse` 입니다.
 
