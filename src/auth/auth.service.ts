@@ -3,18 +3,17 @@ import {JwtService} from "@nestjs/jwt";
 import * as process from "process";
 import {Users} from "../common/entity/users.entity";
 import {Response} from 'express';
-import {UsersService} from "../users/users.service";
 
+// NestJS 서비스로 Injectable 데코레이터 추가
 @Injectable()
 export class AuthService {
 
     constructor(
-        // private readonly userService: UsersService,
         private readonly jwtService: JwtService,
     ) {
     }
 
-    //Access Token 발급
+    // 액세스 토큰 생성 함수
     getAccessToken({user}: { user: Users }): string {
         return this.jwtService.sign({
                 email: user.email,
@@ -28,8 +27,9 @@ export class AuthService {
         );
     }
 
-
+    // 리프레시 토큰 설정 및 생성 함수
     setRefreshToken({user, res}: { user: Users, res: Response }): string {
+        // 리프레시 토큰 생성
         const refreshToken = this.jwtService.sign(
             {
                 email: user.email,
@@ -41,7 +41,7 @@ export class AuthService {
                 expiresIn: '2w',
             },
         );
-        //배포환경에서는 쿠키 보안옵션과 CORS 추가해주어야함
+        // 응답 헤더에 리프레시 토큰 설정
         res.setHeader('Set-Cookie', `refreshToken=${refreshToken}`);
         return refreshToken;
     }

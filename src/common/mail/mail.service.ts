@@ -9,14 +9,14 @@ export class MailService {
     constructor(private readonly mailerService: MailerService) {
     }
 
-    async sendMail() {
+    async sendMail(vrfctCode: number, email: string) {
         try {
             await this.mailerService.sendMail({
-                to: 'kuhj1539@naver.com',
+                to: email,
                 from: process.env.MAIL_USER,
-                subject: 'Hello',
-                text: 'Hello World',
-                html: '<b>Hello World</b>',
+                subject: '회원가입 승인코드',
+                text: `${vrfctCode}`,
+                html: '<b>' + vrfctCode + '</b>',
             });
             console.log('메일이 전송되었습니다')
         } catch (error) {

@@ -16,6 +16,10 @@ import {LoginInput, ModifyPwCond} from "./auth.dto";
 import {ApiBearerAuth, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {PASSWD_SALT} from "../common/app_enum/use_yn_status.enum";
 import {AuthGuard} from "@nestjs/passport";
+import {UserApproveCond, UserCreateCond} from "../users/users.dto";
+import {Users} from "../common/entity/users.entity";
+import {MailService} from "../common/mail/mail.service";
+import {CmmnDtlCl} from "../common/entity/cmmn_dtl_cl.entity";
 
 // Swagger 태그 설정 및 컨트롤러 라우트 설정
 @ApiTags("인증 API")
@@ -25,6 +29,7 @@ export class AuthController {
     constructor(
         private readonly userService: UsersService,
         private readonly authService: AuthService,
+        private readonly mailService: MailService
     ) {
     }
 
@@ -122,5 +127,57 @@ export class AuthController {
         // 새로운 액세스 토큰 발급 및 응답
         const jwt = this.authService.getAccessToken({user});
         return res.status(200).send(jwt);
+    }
+
+
+    @ApiOperation({summary: "회원가입 승인", description: "사용자의 회원가입 승인"})
+    @Post("createUserApprove")
+    async createUserApprove(@Body() cond: UserApproveCond, @Res() res: Response) {
+
+        const user = await this.userService.findByEmail(cond.email);
+
+        if (!user) {
+            throw new UnprocessableEntityException('없는 회원입니다.');
+        }
+
+        if (user.userCl.clDtlCode !== 'USC004') {
+            throw new UnprocessableEntityException('승인신청 할 수 없는 회원입니다.');
+        }
+
+        if (user.vrfctCode !== cond.vrfctCode) {
+            throw new UnprocessableEntityException('인증코드가 옳바르지 않습니다.');
+        }
+
+        await this.userService.userApprove(user)
+
+        return res.status(200).send("회원가입되었습니다.");
+    }
+
+    // 회원가입 엔드포인트
+    @Post("createUserApply")
+    @ApiOperation({summary: "회원가입 신청", description: "사용자의 회원가입 신청"})
+    async createUserApply(@Body() cond: UserCreateCond, @Res() res: Response) {
+        // 새로운 사용자 생성
+        const user = new Users();
+
+        // 비밀번호 암호화 및 사용자 정보 설정
+        user.passwd = await bcrypt.hash(
+            cond.passwd,
+            PASSWD_SALT
+        );
+        user.name = cond.name
+        user.email = cond.email
+        user.userCl = new CmmnDtlCl('USC004')
+        user.vrfctCode = Math.floor(100000 + Math.random() * 900000);
+
+        try {
+            await this.mailService.sendMail(user.vrfctCode, cond.email)
+            // 사용자 저장 및 응답
+            await this.userService.create(user);
+            return res.status(200).send("이메일로 인증코드가 발송되었습니다.");
+        } catch (e) {
+            // 저장 실패 시 예외 처리
+            return res.status(400).send('잘못된 회원정보입니다.');
+        }
     }
 }

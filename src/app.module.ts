@@ -13,8 +13,8 @@ import {CmmnDtlCl} from "./common/entity/cmmn_dtl_cl.entity";
     imports: [
         TypeOrmModule.forRoot({
             type: 'mysql',
-            host: 'localhost',
-            // host: 'mysql',
+            // host: 'localhost',
+            host: 'mysql',
             port: 3306,
             username: 'root',
             password: 'root',

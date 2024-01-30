@@ -5,26 +5,22 @@ import {AuthService} from "./auth.service";
 import {UsersService} from "../users/users.service";
 import {AuthController} from "./auth.controller";
 import {Users} from "../common/entity/users.entity";
-import * as process from "process";
 import {PassportModule} from '@nestjs/passport';
-import {MailService} from "../common/mail/mail.service";
 import {JwtAccessStrategy} from "../common/jwt/jwt-access.strategy";
 import {JwtRefreshStrategy} from "../common/jwt/jwt-refresh.strategy";
+import {MailService} from "../common/mail/mail.service";
 
 @Module({
     imports: [
-        JwtModule.register({
-
-        }), //
+        JwtModule.register({}), //
         TypeOrmModule.forFeature([Users]), //유저 관련 DB 엑세스에 필요,
         PassportModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService, JwtRefreshStrategy, JwtAccessStrategy, UsersService],
+    providers: [AuthService, JwtRefreshStrategy, JwtAccessStrategy, UsersService, MailService],
     exports: [JwtAccessStrategy, JwtRefreshStrategy]
 
 
 })
 export class AuthModule {
-    //
 }

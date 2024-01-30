@@ -42,4 +42,8 @@ export class Users extends Auditable {
     @ApiProperty()
     @Column({nullable: true})
     accessToken: string;
+
+    @ApiProperty()
+    @Column({nullable: true})
+    vrfctCode: number;
 }

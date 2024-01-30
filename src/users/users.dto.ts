@@ -11,3 +11,11 @@ export class UserCreateCond {
     @ApiProperty()
     email: string;
 }
+
+export class UserApproveCond {
+    @ApiProperty()
+    vrfctCode: number
+
+    @ApiProperty()
+    email: string
+}

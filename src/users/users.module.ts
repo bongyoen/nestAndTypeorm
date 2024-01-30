@@ -12,6 +12,6 @@ import {MailService} from "../common/mail/mail.service";
     imports: [TypeOrmModule.forFeature([Users, CmmnCl, CmmnDtlCl])],
     exports: [TypeOrmModule],
     controllers: [UsersController],
-    providers: [UsersService, MailService]
+    providers: [UsersService]
 })
 export class UsersModule {}
