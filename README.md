@@ -28,6 +28,9 @@ $ docker-compose up
 
 4. 회원 목록 조회 API (구현완료)
 
+`import한 table에 보시면 관리자 계정이 있습니다.`
+`email: admin@admin.admin`
+`passwd: admin`
 
 ## **선택적 도전 과제:**
 
