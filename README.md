@@ -1,4 +1,3 @@
-## [백엔드 개발자-경력] 김봉연
 
 nestjs + typeorm + mysql
 
