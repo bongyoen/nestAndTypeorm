@@ -16,32 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `cat`
---
-
-DROP TABLE IF EXISTS `cat`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cat` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `age` int NOT NULL,
-  `breed` varchar(255) NOT NULL,
-  `isActive` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cat`
---
-
-LOCK TABLES `cat` WRITE;
-/*!40000 ALTER TABLE `cat` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cat` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `cmmn_cl`
 --
 
@@ -101,7 +75,7 @@ CREATE TABLE `cmmn_dtl_cl` (
 
 LOCK TABLES `cmmn_dtl_cl` WRITE;
 /*!40000 ALTER TABLE `cmmn_dtl_cl` DISABLE KEYS */;
-INSERT INTO `cmmn_dtl_cl` VALUES ('USC001','관리자','USC','master','master','2024-01-29 16:02:59.347118','2024-01-29 16:07:55.742810','Y'),('USC002','회원','USC','master','master','2024-01-29 16:02:59.347118','2024-01-29 16:07:55.733629','Y'),('USC003','비회원','USC','master','master','2024-01-29 16:02:59.347118','2024-01-29 16:07:55.738361','Y');
+INSERT INTO `cmmn_dtl_cl` VALUES ('USC001','관리자','USC','master','master','2024-01-29 16:02:59.347118','2024-01-29 16:07:55.742810','Y'),('USC002','회원','USC','master','master','2024-01-29 16:02:59.347118','2024-01-29 16:07:55.733629','Y'),('USC003','비회원','USC','master','master','2024-01-29 16:02:59.347118','2024-01-29 16:07:55.738361','Y'),('USC004','가입신청','USC','master','master','2024-01-29 16:02:59.347118','2024-01-29 16:07:55.738361','Y');
 /*!40000 ALTER TABLE `cmmn_dtl_cl` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,11 +101,12 @@ CREATE TABLE `users` (
   `updatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   `useYn` enum('Y','N') NOT NULL DEFAULT 'Y',
   `accessToken` varchar(255) DEFAULT NULL,
+  `vrfctCode` int DEFAULT NULL,
   PRIMARY KEY (`userNo`),
   UNIQUE KEY `IDX_97672ac88f789774dd47f7c8be` (`email`),
   KEY `FK_c9566264922dd53f4af38014a2c` (`userCl`),
   CONSTRAINT `FK_c9566264922dd53f4af38014a2c` FOREIGN KEY (`userCl`) REFERENCES `cmmn_dtl_cl` (`clDtlCode`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,7 +115,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'홍길동','test@test.com','$2b$10$zutSnVZqo5mQ5Y02m6QshOYbxYaWEcNnD4LwnPjTl4lbDf6jiHubu','USC001',NULL,0,NULL,'anonymous','anonymous','2024-01-29 16:20:55.026771','2024-01-30 20:56:40.000000','Y',NULL),(2,'string','string','$2b$10$VAh00kscxe9jOIrMqz96gOtR6UPk1gpfB8dh6Z1f1c1Ze8nMGipS.','USC001',NULL,0,NULL,'anonymous','anonymous','2024-01-29 21:38:33.664011','2024-01-29 21:38:33.664011','Y',NULL),(4,'cyp','cyp@cyp.cyp','$2b$10$k7bMupbJAxmzkT/.yLnsC.qQrObbx3vWLHDpTpDyBNBiAPW2h2DPm','USC002','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImN5cEBjeXAuY3lwIiwidXNlck5vIjo0LCJ1c2VyQ2wiOiJVU0MwMDIiLCJpYXQiOjE3MDY2MTU5MTcsImV4cCI6MTcwNzgyNTUxN30.VPyXaAF3cgKSjZ8D1iYjGeg4AeBUu7E5atggAnu9p3g',0,NULL,'anonymous','anonymous','2024-01-29 23:20:40.438449','2024-01-30 20:58:37.000000','Y','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImN5cEBjeXAuY3lwIiwidXNlck5vIjo0LCJ1c2VyQ2wiOiJVU0MwMDIiLCJpYXQiOjE3MDY2MTU5MTcsImV4cCI6MTcwNjYxNjIxN30.w3HVjRVe-p6r4iBHWBMonQrD1Z-0628NdoIAUvRsjx0');
+INSERT INTO `users` VALUES (1,'admin','admin@admin.admin','$2b$10$JaNn24/1pJC/TbQCsqDkLeQhFT99FTPs3qeF9PQm.TBPMZx5A2wQS','USC001','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmFkbWluIiwidXNlck5vIjoxLCJ1c2VyQ2wiOiJVU0MwMDEiLCJpYXQiOjE3MDY2MjY0NTUsImV4cCI6MTcwNzgzNjA1NX0.tAWj1z8H_6t_GrL58teSxYMGnvIx4jgegPcEFQciAH0',0,NULL,'anonymous','anonymous','2024-01-29 16:20:55.026771','2024-01-30 23:54:15.000000','Y','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmFkbWluIiwidXNlck5vIjoxLCJ1c2VyQ2wiOiJVU0MwMDEiLCJpYXQiOjE3MDY2MjY0NTUsImV4cCI6MTcwNjYyNjc1NX0.vkoFFKBzY4I-PYLbOQ9GkYwLitW6gx02me-Eto8ZYig',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -153,4 +128,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-30 21:25:27
+-- Dump completed on 2024-01-31  0:05:23
