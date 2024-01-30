@@ -1,15 +1,10 @@
 import {
     Column,
     Entity,
-    Generated,
     JoinColumn, ManyToOne,
-    OneToMany,
-    OneToOne,
     PrimaryColumn,
-    PrimaryGeneratedColumn
 } from "typeorm";
-import {CmmnDtlCl} from "./cmmn_dtl_cl.entity";
-import {Auditable} from "../../config/audit/auditable.entity";
+import {Auditable} from "../audit/auditable.entity";
 
 
 

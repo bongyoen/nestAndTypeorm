@@ -1,9 +1,10 @@
-import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {CmmnDtlCl} from "../../common/entity/cmmn_dtl_cl.entity";
-import {Auditable} from "../../config/audit/auditable.entity";
+import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
+import {Auditable} from "../audit/auditable.entity";
 import {ApiProperty} from "@nestjs/swagger";
+import {CmmnDtlCl} from "./cmmn_dtl_cl.entity";
 
 @Entity()
+@Unique(['email'])
 export class Users extends Auditable {
     @ApiProperty()
     @PrimaryGeneratedColumn()
@@ -20,13 +21,25 @@ export class Users extends Auditable {
     @ApiProperty()
     @ManyToOne(() => CmmnDtlCl, {nullable: false})
     @JoinColumn({name: 'userCl'})
-    userCl: string;
+    userCl: CmmnDtlCl;
 
     @ApiProperty()
     @Column()
     passwd: string;
 
     @ApiProperty()
+    @Column({default: 0})
+    loginAttempts: number;
+
+    @ApiProperty()
+    @Column({default: null})
+    lastAccessAt: Date;
+
+    @ApiProperty()
     @Column({nullable: true})
     renewToken: string;
+
+    @ApiProperty()
+    @Column({nullable: true})
+    accessToken: string;
 }

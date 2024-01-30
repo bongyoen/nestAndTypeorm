@@ -1,33 +1,38 @@
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
-import {Cat} from "./cats/entity/cats.entity";
-import {CatsModule} from './cats/cats.module';
-import {AuditingSubscriber} from "./config/audit/entity-subscriber";
-import {Users} from "./users/entity/users.entity";
+import {AuditingSubscriber} from "./common/audit/entity-subscriber";
+import {Users} from "./common/entity/users.entity";
+import {UsersModule} from "./users/users.module";
+import {AuthModule} from "./auth/auth.module";
+import {ConfigModule} from "@nestjs/config";
+import {MailModule} from './common/mail/mail.module';
 import {CmmnCl} from "./common/entity/cmmn_cl.entity";
 import {CmmnDtlCl} from "./common/entity/cmmn_dtl_cl.entity";
-import {UsersModule} from "./users/users.module";
 
 @Module({
     imports: [
         TypeOrmModule.forRoot({
             type: 'mysql',
             host: 'localhost',
+            // host: 'mysql',
             port: 3306,
             username: 'root',
             password: 'root',
             database: 'resourse',
-            entities: [Cat, Users, CmmnCl, CmmnDtlCl],
+            entities: [Users, CmmnCl, CmmnDtlCl],
             synchronize: true,
 
         }),
-        CatsModule,
-        UsersModule
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: `.${process.env.NODE_ENV}.env`
+        }),
+        UsersModule,
+        AuthModule,
+        MailModule,
     ],
-    controllers: [AppController],
-    providers: [AppService, AuditingSubscriber],
+    providers: [AuditingSubscriber],
+
 })
 export class AppModule {
 }

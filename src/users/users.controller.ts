@@ -1,59 +1,68 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Logger} from '@nestjs/common';
-import {Users} from "./entity/users.entity";
+import {
+    Body,
+    Controller,
+    Post,
+    Logger,
+    UseGuards,
+    Req,
+    Res,
+    UnprocessableEntityException
+} from '@nestjs/common';
+import {Users} from "../common/entity/users.entity";
 import {UsersService} from "./users.service";
-import {ApiOperation, ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiOperation, ApiTags} from "@nestjs/swagger";
 import * as bcrypt from "bcrypt";
-import {AppService} from "../app.service";
 import {UserCreateCond} from "./users.dto";
+import {PASSWD_SALT} from "../common/app_enum/use_yn_status.enum";
+import {Request, Response} from "express";
+import {AuthGuard} from "@nestjs/passport";
+import {CmmnDtlCl} from "../common/entity/cmmn_dtl_cl.entity";
+import {MailService} from "../common/mail/mail.service";
 
 @ApiTags("사용자 API")
 @Controller('users')
 export class UsersController {
-    private readonly logger = new Logger(AppService.name);
 
-    PASSWD_SALT = 10;
 
-    constructor(private usersService: UsersService) {
+    constructor(private usersService: UsersService,
+                private readonly mailService: MailService) {
     };
 
-    @Get()
-    @ApiOperation({summary: "모든회원 조회", description: "모든회원 정보를 조회한다."})
-    findAll(): Promise<Users[]> {
-        return this.usersService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id') id: string): string {
-        return `This action returns a #${id} user`;
-    }
-
     @Post()
-    async create(@Body() cond: UserCreateCond) {
+    async create(@Body() cond: UserCreateCond, @Res() res: Response) {
         let user = new Users();
-
+        try {
+            Logger.debug(this.mailService.sendMail())
+        } catch (e) {
+            Logger.debug(e)
+        }
         user.passwd = await bcrypt.hash(
             cond.passwd,
-            this.PASSWD_SALT
+            PASSWD_SALT
         );
         user.name = cond.name
         user.email = cond.email
-        user.userCl = "USC001"
+        user.userCl = new CmmnDtlCl('USC002')
 
-        this.logger.debug(user);
-
-        return this.usersService.create(user);
+        try {
+            await this.usersService.create(user);
+            return res.status(200).send("회원가입되었습니다.");
+        } catch (e) {
+            return res.status(400).send('잘못된 회원정보입니다.');
+        }
     }
 
 
-    @Put(':id')
-    update(@Param('id') id: number, @Body() user: Users) {
-        this.usersService.update(id, user);
-        return `This action updates a #${id} user`;
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: number) {
-        this.usersService.remove(id);
-        return `This action removes a #${id} user`;
+    @Post("allUsers")
+    @UseGuards(AuthGuard('access'))
+    @ApiBearerAuth('access-token')
+    @ApiOperation({summary: "모든 회원조회", description: "관리자 권한을 가지는 유저가 모든회원을 조회한다."})
+    async getAllUsers(@Req() req: Request, @Res() res: Response) {
+        const user = req.user as Users;
+        if (user.userCl.clDtlCode !== "USC001") {
+            throw new UnprocessableEntityException('권한이 존재하지 않습니다.');
+        }
+        const users = await this.usersService.findAll();
+        return res.status(200).send(users);
     }
 }
